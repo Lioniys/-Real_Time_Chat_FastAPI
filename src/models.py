@@ -27,7 +27,7 @@ class Chat(Document):
 class Message(Document):
     sender: IdName
     chat: IdName
-    time: datetime
+    datetime: str
     text: str
     is_read: bool = False
 

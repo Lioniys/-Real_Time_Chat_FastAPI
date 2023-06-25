@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Response
 from beanie import PydanticObjectId, exceptions
 from typing import List
 from src.auth.users import current_active_user
-from src.models import User, Chat, IdName
+from src.models import User, Chat, IdName, Message
 from src.schemas import CreateChat
 
 router = APIRouter()
@@ -74,10 +74,7 @@ async def add_user_in_chat(
     return Response("Failed to add a user to the chat.", status_code=400)
 
 
-@router.get("/messages")
-async def get_messages(): pass
-
-
-@router.post("/messages")
-async def create_message(): pass
-
+@router.get("/messages/{chat_id}", response_model=List[Message], dependencies=[Depends(current_active_user)])
+async def get_messages(chat_id: PydanticObjectId, skip: int = 0, limit: int = 100):
+    messages = await Message.find(Message.chat.id == chat_id).skip(skip).limit(limit).sort("+datetime").to_list()
+    return messages
