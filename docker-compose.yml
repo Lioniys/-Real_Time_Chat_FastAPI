@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  chat_api:
+    container_name: chat_api
+    build: .
+    command: [ "/chat_app/run.sh" ]
+    env_file:
+      - ./.env
+    depends_on:
+      - mongo
+    networks:
+      - chat
+    ports:
+      - "8000:8000"
+
+  mongo:
+      container_name: mongo
+      image: mongo
+      networks:
+        - chat
+      volumes:
+        - mongo_data:/data/db
+
+
+networks:
+    chat:
+      name: chat-net
+
+volumes:
+  mongo_data:
